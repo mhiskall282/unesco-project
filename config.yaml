@@ -1,0 +1,37 @@
+# Experiment Configuration
+
+data:
+  raw_dir: "data/raw/"
+  processed_dir: "data/processed/"
+  features_dir: "data/features/"
+  nsl_kdd_train: "data/raw/KDDTrain+.txt"
+  nsl_kdd_test: "data/raw/KDDTest+.txt"
+
+optimization:
+  bwoa:
+    n_agents: 30
+    max_iter: 100
+    alpha: 0.88
+
+model:
+  cnn_lstm:
+    filters: 64
+    kernel_size: 3
+    lstm_units: 128
+    dropout_rate: 0.3
+
+training:
+  epochs: 100
+  batch_size: 64
+  learning_rate: 0.001
+  early_stopping_patience: 10
+  validation_split: 0.2
+
+evaluation:
+  edge_latency_target_ms: 100
+  max_ram_mb: 1024
+
+logging:
+  log_dir: "logs/"
+  log_level: "INFO"
+  save_model_dir: "models/"
