@@ -50,27 +50,37 @@ class FeatureFitnessEvaluator:
         n_features: int = int(features_mask.shape[0])
         selected_indices = np.where(features_mask == 1)[0]
 
-        # Handle edge case where no features are selected
-        if len(selected_indices) == 0:
+        # Handle constraint: reject any solution with fewer than 10 selected features
+        if len(selected_indices) < 10:
             return 1.0
 
         if SKLEARN_AVAILABLE:
+            from sklearn.model_selection import StratifiedKFold
             # Filter features based on mask
             X_train_sub = X_train[:, selected_indices]
-            X_val_sub = X_val[:, selected_indices]
 
-            # Use a fast classifier (Decision Tree) to evaluate the feature subset
+            # Use 3-fold cross validation with StratifiedKFold
+            skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+            accuracies = []
+            
+            # Fast classifier (Decision Tree) to evaluate the feature subset
             clf = DecisionTreeClassifier(random_state=42, max_depth=5)
-            clf.fit(X_train_sub, y_train)
-            accuracy: float = float(clf.score(X_val_sub, y_val))
+            
+            for train_idx, val_idx in skf.split(X_train_sub, y_train):
+                X_tr, X_va = X_train_sub[train_idx], X_train_sub[val_idx]
+                y_tr, y_va = y_train[train_idx], y_train[val_idx]
+                clf.fit(X_tr, y_tr)
+                accuracies.append(clf.score(X_va, y_va))
+                
+            accuracy = float(np.mean(accuracies))
         else:
             # Fallback deterministic pseudo-accuracy based on selection ratio
             # and mock correlation
             accuracy = 0.5 + 0.4 * (len(selected_indices) / n_features)
 
-        # Calculate fitness
+        # Calculate fitness: alpha * (selected/total) + (1 - alpha) * (1 - accuracy)
         error_rate: float = 1.0 - accuracy
         ratio_features: float = len(selected_indices) / n_features
-        fitness: float = self.alpha * error_rate + (1.0 - self.alpha) * ratio_features
+        fitness: float = self.alpha * ratio_features + (1.0 - self.alpha) * error_rate
 
         return fitness

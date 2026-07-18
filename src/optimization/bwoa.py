@@ -21,6 +21,7 @@ class BinaryWhaleOptimizer:
         max_iter: int,
         fitness_fn: Callable[[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray], float],
         b: float = 1.0,
+        minimum_features: int = 10,
     ):
         """Initializes the Binary Whale Optimization Algorithm optimizer.
 
@@ -31,20 +32,23 @@ class BinaryWhaleOptimizer:
             fitness_fn: A callable function to evaluate the fitness of a feature mask.
                 Expected signature: fitness_fn(mask, X_train, y_train, X_val, y_val) -> float.
             b: Constant for defining the shape of the logarithmic spiral.
+            minimum_features: Constraint for minimum number of features selected.
         """
         self.n_agents: int = n_agents
         self.n_features: int = n_features
         self.max_iter: int = max_iter
         self.fitness_fn: Callable = fitness_fn
         self.b: float = b
+        self.minimum_features: int = minimum_features
 
         # Initialize population with random binary masks (shape: n_agents, n_features)
         self.positions: np.ndarray = np.random.randint(0, 2, size=(self.n_agents, self.n_features))
         
-        # Ensure that no whale has all features disabled (at least one feature selected)
+        # Ensure that no whale has fewer than minimum_features selected
         for i in range(self.n_agents):
-            if np.sum(self.positions[i]) == 0:
-                self.positions[i, np.random.randint(0, self.n_features)] = 1
+            while np.sum(self.positions[i]) < self.minimum_features:
+                disabled_indices = np.where(self.positions[i] == 0)[0]
+                self.positions[i, np.random.choice(disabled_indices)] = 1
 
     def _transfer_function(self, v: np.ndarray) -> np.ndarray:
         """Maps continuous values to probabilities using a V-shaped transfer function.
@@ -111,9 +115,10 @@ class BinaryWhaleOptimizer:
         r3 = np.random.rand(self.n_features)
         new_agent = np.where(r3 < prob, 1 - agent, agent)
         
-        # Ensure at least one feature remains selected
-        if np.sum(new_agent) == 0:
-            new_agent[np.random.randint(0, self.n_features)] = 1
+        # Ensure at least minimum_features remain selected
+        while np.sum(new_agent) < self.minimum_features:
+            disabled_indices = np.where(new_agent == 0)[0]
+            new_agent[np.random.choice(disabled_indices)] = 1
             
         return new_agent
 

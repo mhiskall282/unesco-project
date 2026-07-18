@@ -73,6 +73,20 @@ class ModelTrainer:
             ),
         ]
 
+        # Compute class weights for handling dataset imbalance
+        from sklearn.utils.class_weight import compute_class_weight
+        if len(y_train.shape) > 1 and y_train.shape[-1] > 1:
+            y_train_int = np.argmax(y_train, axis=-1)
+        else:
+            y_train_int = np.squeeze(y_train)
+            
+        class_weights = compute_class_weight(
+            class_weight='balanced',
+            classes=np.unique(y_train_int),
+            y=y_train_int
+        )
+        class_weight_dict = dict(enumerate(class_weights))
+
         # Train model
         history = model.fit(
             X_train,
@@ -81,6 +95,7 @@ class ModelTrainer:
             batch_size=self.batch_size,
             validation_data=(X_val, y_val),
             callbacks=callbacks,
+            class_weight=class_weight_dict,
             verbose=1,
         )
 

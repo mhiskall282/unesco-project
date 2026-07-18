@@ -11,7 +11,7 @@ optimization:
   bwoa:
     n_agents: 30
     max_iter: 100
-    alpha: 0.88
+    alpha: 0.3
 
 model:
   cnn_lstm:
@@ -21,10 +21,10 @@ model:
     dropout_rate: 0.3
 
 training:
-  epochs: 100
-  batch_size: 64
+  epochs: 50
+  batch_size: 128
   learning_rate: 0.001
-  early_stopping_patience: 10
+  early_stopping_patience: 15
   validation_split: 0.2
 
 evaluation:
