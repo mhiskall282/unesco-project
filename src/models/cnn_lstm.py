@@ -54,8 +54,8 @@ def build_cnn_lstm(
     x = tf.keras.layers.MaxPooling1D(pool_size=2, padding="same")(x)
     x = tf.keras.layers.Dropout(dropout_rate)(x)
 
-    # LSTM for temporal sequence learning
-    x = tf.keras.layers.LSTM(units=lstm_units, return_sequences=False)(x)
+    # LSTM for temporal sequence learning (unrolled to support TFLite without Select TF Ops)
+    x = tf.keras.layers.LSTM(units=lstm_units, return_sequences=False, unroll=True)(x)
     x = tf.keras.layers.Dropout(dropout_rate)(x)
 
     # Classifier output
