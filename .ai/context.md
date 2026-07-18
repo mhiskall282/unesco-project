@@ -11,7 +11,7 @@ This repository contains the codebase and research artifacts for "Securing the D
 
 ### Team Lead
 - **Name**: John Okyere
-- **Role**: Full-Stack Engineer, MSc Computer Science candidate (University of Ghana), BSc ICT Education candidate (University of Education, Winneba, Ghana).
+- **Role**: BSc ICT Education candidate (University of Education, Winneba, Ghana).
 - **Affiliations**: Co-founder and Technical Lead at Kayaba Labs; ICP Ambassador. John has trained over 600 developers across Ghana and internationally.
 
 ---
