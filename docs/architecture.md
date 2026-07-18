@@ -9,15 +9,15 @@ The system processes raw IoT/OT telemetry in a pipeline, mapping network packets
 
 ```mermaid
 flowchart TD
-    A[Raw OT/IoT Network Traffic\nSCADA, Modbus, DNP3, OPC-UA] --> B[CICFlowMeter\nFeature Extraction\n80+ raw features]
-    B --> C[Data Preprocessing\nNormalization, Encoding, Train/Test Split]
-    C --> D[BWOA Feature Selection\nn_agents=30, max_iter=100\nV-shaped Transfer Function]
-    D --> E[Optimal Feature Subset\nReduced Dimensionality]
-    E --> F[CNN-LSTM Classifier\nConv1D Spatial + LSTM Temporal]
-    F --> G[Attack Classification\nNormal / DoS / Probe / R2L / U2R]
-    G --> H{Deployment Target}
-    H --> I[Cloud Deployment\nAWS EC2]
-    H --> J[Edge Deployment\nRaspberry Pi, sub-100ms]
+    A["Raw OT/IoT Network Traffic (SCADA, Modbus, DNP3, OPC-UA)"] --> B["CICFlowMeter Feature Extraction (80+ raw features)"]
+    B --> C["Data Preprocessing (Normalization, Encoding, Train/Test Split)"]
+    C --> D["BWOA Feature Selection (n_agents=30, max_iter=100, V-shaped Transfer Function)"]
+    D --> E["Optimal Feature Subset (Reduced Dimensionality)"]
+    E --> F["CNN-LSTM Classifier (Conv1D Spatial + LSTM Temporal)"]
+    F --> G["Attack Classification (Normal / DoS / Probe / R2L / U2R)"]
+    G --> H{"Deployment Target"}
+    H --> I["Cloud Deployment (AWS EC2)"]
+    H --> J["Edge Deployment (Raspberry Pi, sub-100ms)"]
 ```
 
 ### Ingestion and Extraction
@@ -43,20 +43,20 @@ The research workflow comprises three concurrent phases of development and field
 ```mermaid
 flowchart LR
     subgraph Phase1["Phase 1: Data Collection"]
-        P1A[Mining Site OT Infrastructure] --> P1B[AWS EC2 Capture Node]
-        P1B --> P1C[CICFlowMeter Processing]
-        P1C --> P1D[Labeled OT Dataset]
+        P1A["Mining Site OT Infrastructure"] --> P1B["AWS EC2 Capture Node"]
+        P1B --> P1C["CICFlowMeter Processing"]
+        P1C --> P1D["Labeled OT Dataset"]
     end
     subgraph Phase2["Phase 2: Model Adaptation"]
-        P2A[NSL-KDD Baseline Model] --> P2B[Transfer Learning]
+        P2A["NSL-KDD Baseline Model"] --> P2B["Transfer Learning"]
         P1D --> P2B
-        P2B --> P2C[OT-Adapted CNN-LSTM]
-        P2C --> P2D[Validation on SWaT/BATADAL]
+        P2B --> P2C["OT-Adapted CNN-LSTM"]
+        P2C --> P2D["Validation on SWaT/BATADAL"]
     end
     subgraph Phase3["Phase 3: Edge Deployment"]
-        P2D --> P3A[Model Quantization]
-        P3A --> P3B[Edge Hardware Testing]
-        P3B --> P3C[Production Deployment]
+        P2D --> P3A["Model Quantization"]
+        P3A --> P3B["Edge Hardware Testing"]
+        P3B --> P3C["Production Deployment"]
     end
 ```
 

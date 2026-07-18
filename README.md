@@ -21,15 +21,15 @@ The flowchart below illustrates the packet lifecycle from initial network ingest
 
 ```mermaid
 flowchart TD
-    A[Raw OT/IoT Network Traffic\nSCADA, Modbus, DNP3, OPC-UA] --> B[CICFlowMeter\nFeature Extraction\n80+ raw features]
-    B --> C[Data Preprocessing\nNormalization, Encoding, Train/Test Split]
-    C --> D[BWOA Feature Selection\nn_agents=30, max_iter=100\nV-shaped Transfer Function]
-    D --> E[Optimal Feature Subset\nReduced Dimensionality]
-    E --> F[CNN-LSTM Classifier\nConv1D Spatial + LSTM Temporal]
-    F --> G[Attack Classification\nNormal / DoS / Probe / R2L / U2R]
-    G --> H{Deployment Target}
-    H --> I[Cloud Deployment\nAWS EC2]
-    H --> J[Edge Deployment\nRaspberry Pi, sub-100ms]
+    A["Raw OT/IoT Network Traffic (SCADA, Modbus, DNP3, OPC-UA)"] --> B["CICFlowMeter Feature Extraction (80+ raw features)"]
+    B --> C["Data Preprocessing (Normalization, Encoding, Train/Test Split)"]
+    C --> D["BWOA Feature Selection (n_agents=30, max_iter=100, V-shaped Transfer Function)"]
+    D --> E["Optimal Feature Subset (Reduced Dimensionality)"]
+    E --> F["CNN-LSTM Classifier (Conv1D Spatial + LSTM Temporal)"]
+    F --> G["Attack Classification (Normal / DoS / Probe / R2L / U2R)"]
+    G --> H{"Deployment Target"}
+    H --> I["Cloud Deployment (AWS EC2)"]
+    H --> J["Edge Deployment (Raspberry Pi, sub-100ms)"]
 ```
 
 ---
@@ -57,28 +57,27 @@ gantt
 The modular structures of our data pipeline, model training, and edge evaluations:
 
 ```mermaid
-block-beta
-    columns 3
-    block:data_block["Data Ingestion & Loaders"]
+flowchart TD
+    subgraph Data["Data Ingestion & Loaders"]
         nsl["NSL-KDD Loader"]
         swat["SWaT Loader"]
         bat["BATADAL Loader"]
         ot["OT Collector"]
     end
-    block:model_block["Model & Optimization Pipeline"]
+    subgraph Model["Model & Optimization Pipeline"]
         bwoa["BWOA Optimizer"]
         fit["Fitness Evaluation"]
         cnn_lstm["CNN-LSTM Model"]
         train["Model Trainer"]
     end
-    block:eval_block["Evaluation & Utilities"]
+    subgraph Eval["Evaluation & Utilities"]
         met["Performance Metrics"]
         edge["Edge Benchmark"]
         logs["Structured Logger"]
         viz["Visualizer"]
     end
-    data_block --> model_block
-    model_block --> eval_block
+    Data --> Model
+    Model --> Eval
 ```
 
 ---
@@ -192,23 +191,23 @@ The optimization lifecycle runs iteratively through encircling, exploration, and
 
 ```mermaid
 flowchart TD
-    A[Initialize n_agents whale positions\nRandom binary vectors length n_features] --> B[Evaluate fitness\nfor each agent]
-    B --> C[Identify best agent\nleader position X*]
-    C --> D{For each iteration t}
-    D --> E[Update a: 2 to 0 linearly]
-    E --> F{Random p < 0.5?}
-    F -->|Yes| G{|A| < 1?}
-    G -->|Yes bubble-net| H[Shrinking encircling\nX = X* - A times D]
-    G -->|No search| I[Random agent search\nExploration phase]
-    F -->|No spiral| J[Spiral position update\nX = D times e^bl times cos 2pi l + X*]
-    H --> K[Apply V-shaped\nTransfer Function]
+    A["Initialize n_agents whale positions (Random binary vectors length n_features)"] --> B["Evaluate fitness for each agent"]
+    B --> C["Identify best agent (leader position X*)"]
+    C --> D{"For each iteration t"}
+    D --> E["Update a: 2 to 0 linearly"]
+    E --> F{"Random p < 0.5?"}
+    F -->|Yes| G{"|A| < 1?"}
+    G -->|Yes bubble-net| H["Shrinking encircling (X = X* - A * D)"]
+    G -->|No search| I["Random agent search (Exploration phase)"]
+    F -->|No spiral| J["Spiral position update (X = D * e^bl * cos(2pi l) + X*)"]
+    H --> K["Apply V-shaped Transfer Function"]
     I --> K
     J --> K
-    K --> L[Flip bits probabilistically\nBinary position update]
-    L --> M[Evaluate fitness\nfor updated agents]
-    M --> N{t < max_iter?}
+    K --> L["Flip bits probabilistically (Binary position update)"]
+    L --> M["Evaluate fitness for updated agents"]
+    M --> N{"t < max_iter?"}
     N -->|Yes| D
-    N -->|No| O[Return best feature mask\nand fitness history]
+    N -->|No| O["Return best feature mask and fitness history"]
 ```
 
 ---

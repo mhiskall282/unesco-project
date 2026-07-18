@@ -9,23 +9,23 @@ The optimization lifecycle runs iteratively through encircling, exploration, and
 
 ```mermaid
 flowchart TD
-    A[Initialize n_agents whale positions\nRandom binary vectors length n_features] --> B[Evaluate fitness\nfor each agent]
-    B --> C[Identify best agent\nleader position X*]
-    C --> D{For each iteration t}
-    D --> E[Update a: 2 to 0 linearly]
-    E --> F{Random p < 0.5?}
-    F -->|Yes| G{|A| < 1?}
-    G -->|Yes bubble-net| H[Shrinking encircling\nX = X* - A times D]
-    G -->|No search| I[Random agent search\nExploration phase]
-    F -->|No spiral| J[Spiral position update\nX = D times e^bl times cos 2pi l + X*]
-    H --> K[Apply V-shaped\nTransfer Function]
+    A["Initialize n_agents whale positions (Random binary vectors length n_features)"] --> B["Evaluate fitness for each agent"]
+    B --> C["Identify best agent (leader position X*)"]
+    C --> D{"For each iteration t"}
+    D --> E["Update a: 2 to 0 linearly"]
+    E --> F{"Random p < 0.5?"}
+    F -->|Yes| G{"|A| < 1?"}
+    G -->|Yes bubble-net| H["Shrinking encircling (X = X* - A * D)"]
+    G -->|No search| I["Random agent search (Exploration phase)"]
+    F -->|No spiral| J["Spiral position update (X = D * e^bl * cos(2pi l) + X*)"]
+    H --> K["Apply V-shaped Transfer Function"]
     I --> K
     J --> K
-    K --> L[Flip bits probabilistically\nBinary position update]
-    L --> M[Evaluate fitness\nfor updated agents]
-    M --> N{t < max_iter?}
+    K --> L["Flip bits probabilistically (Binary position update)"]
+    L --> M["Evaluate fitness for updated agents"]
+    M --> N{"t < max_iter?"}
     N -->|Yes| D
-    N -->|No| O[Return best feature mask\nand fitness history]
+    N -->|No| O["Return best feature mask and fitness history"]
 ```
 
 ---
