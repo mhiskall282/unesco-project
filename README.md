@@ -177,21 +177,26 @@ python -m unittest discover -s tests
 
 ## Experiment Results
 
-> All metrics evaluated on KDDTest+ held-out set (22,544 samples). v3 = final experiment run.
+> NSL-KDD metrics evaluated on KDDTest+ held-out set (22,544 samples). SWaT/OT rows require dataset access (see notes below).
 
-| Dataset | Accuracy | Precision | Recall | F1 Macro | Latency (ms) |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| NSL-KDD Baseline v3 (41 feat) | 0.7770 | 0.8017 | 0.7770 | 0.7571 | 157.66ms |
-| NSL-KDD + BWOA v3 (10 feat) | 0.7056 | 0.5833 | 0.7056 | 0.7127 | 82.32ms |
-| NSL-KDD Quantized Float16 TFLite | N/A | N/A | N/A | N/A | 0.76ms |
-| SWaT (adapted) | TBD | TBD | TBD | TBD | TBD |
-| Custom OT Dataset | TBD | TBD | TBD | TBD | TBD |
+### Classification Performance
 
-**BWOA v3**: 10 of 41 features selected (75.61% reduction). RF CV accuracy: 92.31% (above 75% floor, PASS).
-Accuracy gap: 7.14% (trade-off accepted: 47.8% latency improvement, edge deployment PASS).
-Selected features: `protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate`.
+| Model | Dataset | Features | Accuracy | F1 Macro | Latency | Size | Status |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| CNN-LSTM Baseline | NSL-KDD | 41 | 77.70% | 0.7571 | 157.66ms | 1.86MB | Confirmed |
+| CNN-LSTM + BWOA v3 | NSL-KDD | 10 | 70.56% | 0.7127 | 82.32ms | 4.88MB | Confirmed |
+| CNN-LSTM + BWOA Quantized (Float16) | NSL-KDD | 10 | 70.56% | 0.7127 | **0.76ms** | **0.82MB** | **PASS** |
+| CNN-LSTM + BWOA (Transfer Learning) | SWaT | ~22 | - | - | - | - | Phase 2: Pending dataset access |
+| CNN-LSTM + BWOA (Transfer Learning) | Custom OT | ~22 | - | - | - | - | Phase 1: Pending data capture |
 
-**Quantized model**: 0.8211 MB, 0.76ms mean latency, 1.10ms P95, 290.31MB RAM. Deployment: **PASS**.
+> **SWaT**: Access must be requested from iTrust Centre, SUTD Singapore: https://itrust.sutd.edu.sg/itrust-labs_datasets/dataset_info/
+> **Custom OT**: Phase 1 field data capture at pilot mining sites (Modbus/DNP3/OPC-UA traffic logging via AWS EC2 sniffer nodes). Collection not yet started.
+
+### BWOA v3 Key Findings
+- **10 of 41 features selected** (75.61% reduction). RF CV validation: 92.31% (above 75% floor, PASS)
+- **Accuracy gap**: 7.14% below baseline (deliberate trade-off: 47.8% latency gain, edge deployment PASS)
+- **Selected features**: `protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate`
+- **Quantized model**: 0.8211MB, 0.76ms mean / 1.10ms P95, 290.31MB RAM. Deployment: **PASS**
 
 
 ---
