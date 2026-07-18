@@ -40,7 +40,7 @@ def build_cnn_lstm(
         padding="same",
     )(inputs)
     x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.MaxPooling1D(pool_size=2)(x)
+    x = tf.keras.layers.MaxPooling1D(pool_size=2, padding="same")(x)
     x = tf.keras.layers.Dropout(dropout_rate)(x)
 
     # Secondary Convolutional block
@@ -51,7 +51,7 @@ def build_cnn_lstm(
         padding="same",
     )(x)
     x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.MaxPooling1D(pool_size=2)(x)
+    x = tf.keras.layers.MaxPooling1D(pool_size=2, padding="same")(x)
     x = tf.keras.layers.Dropout(dropout_rate)(x)
 
     # LSTM for temporal sequence learning
