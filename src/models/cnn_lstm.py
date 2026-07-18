@@ -17,6 +17,7 @@ def build_cnn_lstm(
     lstm_units: int = 128,
     dropout_rate: float = 0.3,
     unroll: bool = False,
+    num_lstm_layers: int = 1,
 ) -> tf.keras.Model:
     """Builds and compiles the CNN-LSTM hybrid neural network model.
 
@@ -27,6 +28,8 @@ def build_cnn_lstm(
         kernel_size: Dimension of kernel window size in Conv1D.
         lstm_units: Size of hidden units in LSTM layers.
         dropout_rate: Ratio of node dropouts for regularization.
+        unroll: Whether to unroll the LSTM layer for TFLite conversion.
+        num_lstm_layers: Number of stacked LSTM layers.
 
     Returns:
         A compiled tf.keras.Model instance.
@@ -56,6 +59,11 @@ def build_cnn_lstm(
     x = tf.keras.layers.Dropout(dropout_rate)(x)
 
     # LSTM for temporal sequence learning (unrolled to support TFLite without Select TF Ops)
+    if num_lstm_layers > 1:
+        for _ in range(num_lstm_layers - 1):
+            x = tf.keras.layers.LSTM(units=lstm_units, return_sequences=True, unroll=unroll)(x)
+            x = tf.keras.layers.Dropout(dropout_rate)(x)
+    
     x = tf.keras.layers.LSTM(units=lstm_units, return_sequences=False, unroll=unroll)(x)
     x = tf.keras.layers.Dropout(dropout_rate)(x)
 

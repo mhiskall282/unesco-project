@@ -128,6 +128,7 @@ class BinaryWhaleOptimizer:
         y_train: np.ndarray,
         X_val: np.ndarray,
         y_val: np.ndarray,
+        patience: int = 15,
     ) -> Tuple[np.ndarray, List[float]]:
         """Orchestrates the BWOA optimization search iterations.
 
@@ -136,6 +137,7 @@ class BinaryWhaleOptimizer:
             y_train: Training labels array.
             X_val: Validation features array.
             y_val: Validation labels array.
+            patience: Number of iterations to wait for improvement before early stopping.
 
         Returns:
             A tuple of (best_feature_mask, best_fitness_history) where:
@@ -153,6 +155,8 @@ class BinaryWhaleOptimizer:
                 best_fitness = fitness
                 best_agent = np.copy(self.positions[i])
 
+        no_improvement_count = 0
+
         # Iterative search loop
         for iteration in range(self.max_iter):
             # Parameter a decreases linearly from 2 to 0
@@ -168,15 +172,26 @@ class BinaryWhaleOptimizer:
                     self.positions
                 )
                 
+            improved = False
             # Evaluate new positions
             for i in range(self.n_agents):
                 fitness = self.fitness_fn(new_positions[i], X_train, y_train, X_val, y_val)
                 if fitness < best_fitness:
                     best_fitness = fitness
                     best_agent = np.copy(new_positions[i])
+                    improved = True
                     
             self.positions = new_positions
             best_fitness_history.append(best_fitness)
             print(f"Iteration {iteration + 1}/{self.max_iter} - Best Fitness: {best_fitness:.5f}")
+
+            if improved:
+                no_improvement_count = 0
+            else:
+                no_improvement_count += 1
+
+            if patience is not None and no_improvement_count >= patience:
+                print(f"Early stopping triggered: Best fitness did not improve for {patience} iterations.")
+                break
 
         return best_agent, best_fitness_history

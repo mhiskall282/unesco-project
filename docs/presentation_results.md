@@ -8,7 +8,7 @@ Saint Petersburg Mining University — UNESCO Young Scientists Forum 2026
 ## Slide 1: Title & Project Scope
 ### Securing the Digital Mine: A Metaheuristic Optimized Deep Learning Framework for Intrusion Detection in IoT Enabled Mineral Resource Operations
 
-* **Team Lead**: John Okyere (Technical Lead, Kayaba Labs; MSc Candidate, University of Ghana)
+* **Team Lead**: John Okyere (Technical Lead, Kayaba Labs)
 * **Under the Auspices of**: UNESCO & Empress Catherine II Saint Petersburg Mining University, Russia
 * **Event Dates**: 12-17 October 2026
 * **Key Idea**: A lightweight, edge-deployable intrusion detection system (IDS) utilizing Binary Whale Optimization Algorithm (BWOA) for feature selection and CNN-LSTM for classification.

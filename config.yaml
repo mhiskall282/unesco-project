@@ -12,6 +12,8 @@ optimization:
     n_agents: 30
     max_iter: 100
     alpha: 0.3
+    min_accuracy: 0.75
+    min_features: 10
 
 model:
   cnn_lstm:
