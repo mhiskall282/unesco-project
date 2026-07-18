@@ -85,10 +85,14 @@ $$x_{i,j}(t+1) = \begin{cases} 1 - x_{i,j}(t) & \text{if } r < T(v_{i,j}(t+1)) \
 
 The feature selection wrapper optimizes a multi-objective function, maximizing classification performance while minimizing the feature count:
 
-$$\text{Fitness} = \alpha \times \text{Error Rate} + (1 - \alpha) \times \left( \frac{N_{\text{selected}}}{N_{\text{total}}} \right)$$
+$$\text{Fitness} = \alpha \times \left( \frac{N_{\text{selected}}}{N_{\text{total}}} \right) + (1 - \alpha) \times \text{Error Rate}$$
 
 Where:
-* $\text{Error Rate} = 1 - \text{Accuracy}$ on validation splits.
+* $\text{Error Rate} = 1 - \text{Accuracy}$ on 3-fold stratified cross validation splits (using RandomForest proxy).
 * $N_{\text{selected}}$ is the number of active features in the current mask.
 * $N_{\text{total}}$ is the total number of features (e.g., 41 for NSL-KDD).
-* $\alpha \in [0, 1]$ is a weight parameter (set to 0.88 to prioritize classification performance).
+* $\alpha \in [0, 1]$ is a weight parameter. In v3, $\alpha = 0.3$ to prioritize classification accuracy (70%) over feature reduction (30%).
+
+**Accuracy Floor Constraint**: Any feature subset yielding validation accuracy below the threshold $\tau$ (default: $\tau = 0.75$) is assigned the maximum fitness penalty of 1.0 and rejected:
+
+$$\text{Fitness} = \begin{cases} 1.0 & \text{if Accuracy} < \tau \text{ (floor constraint)} \\ \alpha \times \frac{N_{\text{selected}}}{N_{\text{total}}} + (1-\alpha) \times (1 - \text{Accuracy}) & \text{otherwise} \end{cases}$$

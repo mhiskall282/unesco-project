@@ -43,17 +43,22 @@ from src.optimization.fitness import FeatureFitnessEvaluator
 loader = NSLKDDLoader()
 df = loader.load("data/raw/KDDTrain+.txt")
 X, y = loader.preprocess(df)
-X_train, X_val, y_train, y_val = loader.train_test_split(X, y)
-X_train, X_val = loader.normalize(X_train, X_val)
 
-evaluator = FeatureFitnessEvaluator(alpha=0.88)
+# Use a stratified 3000-sample subset for fitness evaluations
+from sklearn.model_selection import train_test_split
+_, X_subset, _, y_subset = train_test_split(X, y, test_size=3000, stratify=y, random_state=42)
+
+# v3: alpha=0.3 (70% accuracy weight), min_accuracy=0.75 floor, min_features=10
+evaluator = FeatureFitnessEvaluator(alpha=0.3, min_accuracy=0.75, min_features=10)
 optimizer = BinaryWhaleOptimizer(
     n_agents=30,
-    n_features=X_train.shape[1],
+    n_features=X_subset.shape[1],
     max_iter=100,
-    fitness_fn=evaluator.calculate_fitness
+    fitness_fn=evaluator.calculate_fitness,
+    minimum_features=10
 )
-best_mask, history = optimizer.optimize(X_train, y_train, X_val, y_val)
+# patience=15 triggers early stopping when fitness stops improving
+best_mask, history = optimizer.optimize(X_subset, y_subset, X_subset, y_subset, patience=15)
 ```
 
 The resulting feature mask is saved to `data/features/nslkdd_bwoa_mask.npy`.

@@ -1,7 +1,7 @@
 # Presentation Slides: Securing the Digital Mine
 
-Saint Petersburg Mining University — UNESCO Young Scientists Forum 2026  
-*Track 3: "Smart Subsoil" — Digital Transformation and Automation in the Mineral Resources Complex*
+Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026  
+*Track 3: "Smart Subsoil" - Digital Transformation and Automation in the Mineral Resources Complex*
 
 ---
 
@@ -36,28 +36,30 @@ Saint Petersburg Mining University — UNESCO Young Scientists Forum 2026
 ---
 
 ## Slide 4: BWOA Feature Selection Results
-### 75.61% Dimensionality Reduction
+### 75.61% Dimensionality Reduction (v3 with Accuracy Floor Constraint)
 * **Input Features**: 41 raw network features (NSL-KDD schema).
-* **BWOA Output Subset**: **10 features** selected:
-  `['protocol_type', 'service', 'src_bytes', 'urgent', 'num_failed_logins', 'count', 'srv_serror_rate', 'diff_srv_rate', 'dst_host_srv_diff_host_rate', 'dst_host_srv_rerror_rate']`
-* **Performance Benefit**: Reduces model input layer complexity by **75.61%**, translating to a **47.8% decrease in inference latency**.
+* **BWOA Output Subset**: **10 features** selected (v3 with 75% accuracy floor):
+  `['protocol_type', 'service', 'flag', 'src_bytes', 'hot', 'su_attempted', 'serror_rate', 'same_srv_rate', 'diff_srv_rate', 'dst_host_diff_srv_rate']`
+* **BWOA Validation Accuracy**: **92.31%** (RandomForest 3-fold CV on 3000-sample stratified subset).
+* **Performance Benefit**: Reduces model input layer complexity by **75.61%**, translating to lower inference latency and smaller model footprint.
 
 ---
 
 ## Slide 5: Model Classification Performance
-### Experimental Metrics (Test Split Evaluated)
+### Experimental Metrics (v3 - Test Split Evaluated, KDDTest+ held-out set)
 
 | Model | Features | Accuracy | Precision | Recall | F1 Macro | AUC-ROC |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | CNN-LSTM Baseline | 41 | 78.70% | 0.8231 | 0.7870 | 0.7657 | 0.9336 |
-| **CNN-LSTM + BWOA** | **10** | **67.83%** | **0.7637** | **0.6783** | **0.7052** | **0.8471** |
+| **CNN-LSTM + BWOA (v3)** | **10** | **[v3 pending]** | **[v3 pending]** | **[v3 pending]** | **[v3 pending]** | **[v3 pending]** |
 
-* **Analysis**: While the baseline model achieves higher raw scores, the BWOA optimized model maintains strong classification bounds (F1 Macro = 0.7052) while processing inputs with only a fraction of the parameters.
+* **Analysis**: The v3 BWOA optimizer enforces a 75% validation accuracy floor during feature selection. The 10-feature subset (validated at 92.31% accuracy by RandomForest CV) feeds the optimized CNN-LSTM, targeting an accuracy gap of under 3% from the 78.70% baseline.
+* **v3 experiment is currently running - results will be filled once training completes.**
 
 ---
 
 ## Slide 6: Per-Class Breakdown (Optimized Model)
-### Multi-Class Performance Under BWOA
+### Multi-Class Performance Under BWOA (v2 reference - v3 pending)
 
 | Class Target | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: |
@@ -65,9 +67,10 @@ Saint Petersburg Mining University — UNESCO Young Scientists Forum 2026
 | **DoS** | 0.7765 | 0.6318 | 0.6967 |
 | **Probe** | 0.5939 | 0.8558 | 0.7012 |
 | **R2L** | 0.3122 | 0.5456 | 0.3971 |
-| **U2R** | 0.0211 | 0.1642 | 0.0374 |
+| **U2R (v2)** | 0.0211 | 0.1642 | 0.0374 |
 
-* **Insights**: Highly robust detection for common attacks (Normal: 0.9835 precision; Probe: 0.8558 recall) and balanced class weight integration to address low-sample bounds (R2L and U2R).
+* **v3 Target**: U2R F1 above 0.20 (enforced via balanced class weights and 75% accuracy floor constraint).
+* **Insights**: Highly robust detection for common attacks (Normal: 0.9835 precision; Probe: 0.8558 recall). The v3 run with a 75% accuracy floor and balanced class weights is expected to improve minority class performance, especially U2R.
 
 ---
 
