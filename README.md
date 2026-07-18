@@ -177,12 +177,17 @@ python -m unittest discover -s tests
 
 ## Experiment Results
 
-| Dataset | Accuracy | Precision | Recall | F1 | Latency (ms) |
+> All metrics evaluated on held-out test sets. NSL-KDD results on KDDTest+ (22,544 samples). v3 = current experiment run.
+
+| Dataset | Accuracy | Precision | Recall | F1 Macro | Latency (ms) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| NSL-KDD (baseline) | 0.7870 | 0.8231 | 0.7870 | 0.7657 | 68.27ms |
-| NSL-KDD + BWOA | 0.6783 | 0.7637 | 0.6783 | 0.7052 | 35.60ms |
+| NSL-KDD Baseline v3 (41 feat) | 0.7770 | 0.8017 | 0.7770 | 0.7571 | 157.66ms |
+| NSL-KDD + BWOA v3 (10 feat) | *pending* | *pending* | *pending* | *pending* | *pending* |
+| NSL-KDD Quantized Float16 | N/A | N/A | N/A | N/A | 0.14ms |
 | SWaT (adapted) | TBD | TBD | TBD | TBD | TBD |
 | Custom OT Dataset | TBD | TBD | TBD | TBD | TBD |
+
+**BWOA v3 Feature Selection**: 10 of 41 features selected (75.61% reduction). RF CV accuracy: 92.31% (above 75% floor, PASS). Features: `protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate`.
 
 ---
 

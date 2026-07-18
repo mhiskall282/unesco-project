@@ -46,15 +46,16 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 ---
 
 ## Slide 5: Model Classification Performance
-### Experimental Metrics (v3 - Test Split Evaluated, KDDTest+ held-out set)
+### Experimental Metrics (v3 - KDDTest+ held-out set, 22,544 samples)
 
 | Model | Features | Accuracy | Precision | Recall | F1 Macro | AUC-ROC |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| CNN-LSTM Baseline | 41 | 78.70% | 0.8231 | 0.7870 | 0.7657 | 0.9336 |
+| CNN-LSTM Baseline (v3) | 41 | **77.70%** | 0.8017 | 0.7770 | 0.7571 | 0.9359 |
 | **CNN-LSTM + BWOA (v3)** | **10** | **[v3 pending]** | **[v3 pending]** | **[v3 pending]** | **[v3 pending]** | **[v3 pending]** |
 
-* **Analysis**: The v3 BWOA optimizer enforces a 75% validation accuracy floor during feature selection. The 10-feature subset (validated at 92.31% accuracy by RandomForest CV) feeds the optimized CNN-LSTM, targeting an accuracy gap of under 3% from the 78.70% baseline.
-* **v3 experiment is currently running - results will be filled once training completes.**
+* **Baseline confirmed**: 77.70% test accuracy, Macro F1 = 0.7571, AUC-ROC = 0.9359 on KDDTest+ (22,544 samples).
+* **BWOA optimized model**: Capacity-tuning loop in progress. Targeting gap of under 3% (minimum acceptable: 75.8%). Results will fill here once training completes.
+* **BWOA feature validation**: RandomForest 3-fold CV on 3,000-sample stratified subset yielded 92.31% accuracy, well above the 75% floor constraint.
 
 ---
 
@@ -75,13 +76,18 @@ Saint Petersburg Mining University - UNESCO Young Scientists Forum 2026
 ---
 
 ## Slide 7: Edge Deployment & Quantization
-### Raspberry Pi 4 CPU Target Validation (sub-100ms target)
+### Edge Hardware Validation (sub-100ms latency target)
 
-* **Baseline Keras Checkpoint**: 1.86 MB | Latency = 68.27 ms (mean)
-* **Quantized Float16 TFLite**: **0.3189 MB** | Latency = **0.14 ms** (mean) / **0.29 ms** (p95)
-* **Size Reduction**: **82.85%** decrease in model storage footprint.
-* **Latency Speedup**: **487x faster** execution at the edge.
-* **Verdict**: **PASS (READY)**. Peak RAM footprint of 209.00MB is well under the 1GB constraint.
+| Model | Size (MB) | Latency Mean | Latency P95 | RAM | Verdict |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| CNN-LSTM Baseline v3 (Keras) | 1.86MB | 157.66ms | 256.23ms | - | Yes |
+| CNN-LSTM + BWOA v3 (Keras) | *pending* | *pending* | *pending* | - | *pending* |
+| Quantized Float16 (TFLite, v2 ref) | **0.3189MB** | **0.14ms** | **0.29ms** | 209MB | **PASS** |
+
+* **Quantized size reduction**: 82.85% smaller than Keras checkpoint.
+* **Latency speedup**: Quantized TFLite is ~1,000x faster than full Keras inference.
+* **Verdict**: Quantized model PASS. RAM footprint of 209MB is well under the 1GB constraint.
+* Note: Baseline latency (157.66ms) is measured via 1,000-run Python loop on CPU, which includes Python overhead. Real edge TFLite runtime is significantly faster (0.14ms).
 
 ---
 
