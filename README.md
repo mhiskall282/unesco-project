@@ -179,8 +179,8 @@ python -m unittest discover -s tests
 
 | Dataset | Accuracy | Precision | Recall | F1 | Latency (ms) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| NSL-KDD (baseline) | 0.7399 | 0.7902 | 0.7399 | 0.6922 | 32.54ms |
-| NSL-KDD + BWOA | 0.4300 | 0.2762 | 0.4300 | 0.2668 | 16.37ms |
+| NSL-KDD (baseline) | 0.7870 | 0.8231 | 0.7870 | 0.7657 | 68.27ms |
+| NSL-KDD + BWOA | 0.6783 | 0.7637 | 0.6783 | 0.7052 | 35.60ms |
 | SWaT (adapted) | TBD | TBD | TBD | TBD | TBD |
 | Custom OT Dataset | TBD | TBD | TBD | TBD | TBD |
 
