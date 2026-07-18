@@ -15,9 +15,9 @@ flowchart TD
     D --> E["Update a: 2 to 0 linearly"]
     E --> F{"Random p &lt; 0.5?"}
     F -->|Yes| G{"abs(A) &lt; 1?"}
-    G -->|Yes bubble-net| H["Shrinking encircling (X = X_best - A * D)"]
+    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A x D"]
     G -->|No search| I["Random agent search (Exploration phase)"]
-    F -->|No spiral| J["Spiral position update (X = D * e^(b*l) * cos(2*pi*l) + X_best)"]
+    F -->|No spiral| J["Spiral update: X = D x exp(b x l) x cos(2 x pi x l) + X_best"]
     H --> K["Apply V-shaped Transfer Function"]
     I --> K
     J --> K

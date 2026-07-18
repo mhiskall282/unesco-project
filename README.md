@@ -177,17 +177,22 @@ python -m unittest discover -s tests
 
 ## Experiment Results
 
-> All metrics evaluated on held-out test sets. NSL-KDD results on KDDTest+ (22,544 samples). v3 = current experiment run.
+> All metrics evaluated on KDDTest+ held-out set (22,544 samples). v3 = final experiment run.
 
 | Dataset | Accuracy | Precision | Recall | F1 Macro | Latency (ms) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | NSL-KDD Baseline v3 (41 feat) | 0.7770 | 0.8017 | 0.7770 | 0.7571 | 157.66ms |
-| NSL-KDD + BWOA v3 (10 feat) | *pending* | *pending* | *pending* | *pending* | *pending* |
-| NSL-KDD Quantized Float16 | N/A | N/A | N/A | N/A | 0.14ms |
+| NSL-KDD + BWOA v3 (10 feat) | 0.7056 | 0.5833 | 0.7056 | 0.7127 | 82.32ms |
+| NSL-KDD Quantized Float16 TFLite | N/A | N/A | N/A | N/A | 0.76ms |
 | SWaT (adapted) | TBD | TBD | TBD | TBD | TBD |
 | Custom OT Dataset | TBD | TBD | TBD | TBD | TBD |
 
-**BWOA v3 Feature Selection**: 10 of 41 features selected (75.61% reduction). RF CV accuracy: 92.31% (above 75% floor, PASS). Features: `protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate`.
+**BWOA v3**: 10 of 41 features selected (75.61% reduction). RF CV accuracy: 92.31% (above 75% floor, PASS).
+Accuracy gap: 7.14% (trade-off accepted: 47.8% latency improvement, edge deployment PASS).
+Selected features: `protocol_type, service, flag, src_bytes, hot, su_attempted, serror_rate, same_srv_rate, diff_srv_rate, dst_host_diff_srv_rate`.
+
+**Quantized model**: 0.8211 MB, 0.76ms mean latency, 1.10ms P95, 290.31MB RAM. Deployment: **PASS**.
+
 
 ---
 
@@ -202,9 +207,9 @@ flowchart TD
     D --> E["Update a: 2 to 0 linearly"]
     E --> F{"Random p &lt; 0.5?"}
     F -->|Yes| G{"abs(A) &lt; 1?"}
-    G -->|Yes bubble-net| H["Shrinking encircling (X = X_best - A * D)"]
+    G -->|Yes bubble-net| H["Shrinking encircling: X = X_best - A x D"]
     G -->|No search| I["Random agent search (Exploration phase)"]
-    F -->|No spiral| J["Spiral position update (X = D * e^(b*l) * cos(2*pi*l) + X_best)"]
+    F -->|No spiral| J["Spiral update: X = D x exp(b x l) x cos(2 x pi x l) + X_best"]
     H --> K["Apply V-shaped Transfer Function"]
     I --> K
     J --> K
