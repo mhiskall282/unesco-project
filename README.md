@@ -223,7 +223,7 @@ flowchart TD
 ---
 
 ## Team
-- **John Okyere**: Team Lead, AI Security Researcher (University of Education, Winneba and University of Ghana; Co-founder, Kayaba Labs; ICP Ambassador; johnokyere.xyz).
+- **John Okyere**: Team Lead, AI Security Researcher (University of Education, Winneba and Co-founder, Kayaba Labs; ICP Ambassador; johnokyere.xyz).
 - **[Team Member 2]**: Researcher, SCADA/IIoT Data Acquisition Specialist.
 - **[Team Member 3]**: Edge Deployment and Quantization Engineer.
 
